@@ -1,0 +1,36 @@
+name: Tägliches Wissensmagazin
+on:
+  schedule:
+    # 18:00 Berlin: 16:00 UTC im Sommer, 17:00 UTC im Winter.
+    - cron: '0 16,17 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: daily-magazine
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Artikel erstellen
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: gpt-5.1
+          CHECK_HOUR: ${{ github.event_name == 'schedule' && '1' || '0' }}
+        run: python scripts/publish.py
+      - name: Änderungen veröffentlichen
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add articles.json
+          if git diff --cached --quiet; then
+            echo "Keine neue Ausgabe."
+          else
+            git commit -m "Neue Wissensmagazin-Ausgabe"
+            git push
+          fi
