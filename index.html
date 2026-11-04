@@ -24,6 +24,9 @@ function applySettings(){
 function fmtDate(s){return new Date(s+"T12:00:00").toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"})}
 const figureTradeoffs='<figure class="figure"><h3>Was eine Kartenprojektion priorisieren kann</h3><div class="plot"><div class="plotcell"><strong>Flächentreue</strong>Relative Größe bleibt gleich</div><div class="plotcell"><strong>Winkeltreue</strong>Lokale Winkel bleiben gleich</div><div class="plotcell"><strong>Entfernungstreue</strong>Bestimmte Strecken bleiben maßhaltig</div></div><figcaption>Schematische Darstellung: Keine flache Weltkarte kann alle Eigenschaften überall gleichzeitig bewahren.</figcaption></figure>';
 const figureLatitude=(()=>{const data=[[0,1],[30,1.333],[45,2],[60,4],[70,8.55]];return '<figure class="figure"><h3>Mercator: Flächenvergrößerung nach Breitengrad</h3><div class="bars">'+data.map(([lat,n])=>'<span>'+lat+'°</span><div class="bartrack" role="img" aria-label="'+lat+' Grad: Faktor '+n+'"><div class="barfill" style="width:'+Math.round(n/8.55*100)+'%"></div></div><strong>'+n.toLocaleString("de-DE",{maximumFractionDigits:2})+'×</strong>').join("")+'</div><figcaption>Mathematisches Beispiel: örtlicher Flächenmaßstab 1/cos²(φ) bei sphärischer Mercatorprojektion, gerundet. Kein Vergleich realer Länderflächen.</figcaption></figure>'})();
+
+const figureTimescales='<figure class="figure"><h3>Drei Arten, Zeit zu bestimmen</h3><div class="plot"><div class="plotcell"><strong>UT1</strong>Erdrotation<br><small>astronomisch</small></div><div class="plotcell"><strong>TAI</strong>Atomuhren<br><small>kontinuierlich</small></div><div class="plotcell"><strong>UTC</strong>Weltzeit<br><small>zivile Referenz</small></div></div><figcaption>UT1 orientiert sich an der Erde, TAI am atomaren Zeitmaßstab. UTC koordiniert die gemeinsame zivile Zeit.</figcaption></figure>';
+const figureLeap='<figure class="figure"><h3>Die Schaltsekunde von 2016 auf 2017</h3><div class="plot"><div class="plotcell"><strong>23:59:59</strong><small>31. Dezember</small></div><div class="plotcell"><strong>23:59:60</strong><small>zusätzliche Sekunde</small></div><div class="plotcell"><strong>00:00:00</strong><small>1. Januar</small></div></div><figcaption>Eine positive Schaltsekunde fügt der UTC-Zeitfolge eine zusätzliche Sekunde hinzu. 2016/2017 geschah dies bislang zum letzten Mal.</figcaption></figure>';
 function prose(s){
  const parts=s.split(/(```[\s\S]*?```)/g);
  return parts.map(part=>{
@@ -33,6 +36,8 @@ function prose(s){
    if(p.startsWith("# "))return "";
    if(p.trim()==="[[diagram:tradeoffs]]")return figureTradeoffs;
    if(p.trim()==="[[diagram:latitude]]")return figureLatitude;
+   if(p.trim()==="[[diagram:timescales]]")return figureTimescales;
+   if(p.trim()==="[[diagram:leapsecond]]")return figureLeap;
    return "<p>"+esc(p).replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>").replace(/https?:\/\/[^\s<]+/g,url=>'<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+url+'</a>').replace(/\n/g,"<br>")+"</p>";
  }).join("");
  }).join("");
