@@ -35,6 +35,11 @@ const figureComparison='<figure class="figure"><h3>Vier verschiedene Fenster auf
 
 const figureMaritimeZones='<figure class="figure"><h3>Meereszonen ab der Basislinie</h3><div class="plot"><div class="plotcell"><strong>12 Seemeilen</strong>Küstenmeer<br><small>Staatliche Souveränität mit Durchfahrtsrechten</small></div><div class="plotcell"><strong>24 Seemeilen</strong>Anschlusszone<br><small>Bestimmte Kontrollrechte</small></div><div class="plotcell"><strong>200 Seemeilen</strong>Ausschließliche Wirtschaftszone<br><small>Ressourcenrechte, keine vollständige Gebietshoheit</small></div></div><figcaption>Vereinfachte Höchstentfernungen von der jeweils maßgeblichen Basislinie. Zonen überlappen sich teilweise; die Darstellung ist nicht maßstabsgetreu. Eine Seemeile entspricht 1.852 Metern.</figcaption></figure>';
 const figureTuvaluIslands='<figure class="figure"><h3>Wie sich Tuvalus Inseln veränderten</h3><div class="plot"><div class="plotcell"><strong>73 Inseln</strong>Flächenzuwachs</div><div class="plotcell"><strong>28 Inseln</strong>Flächenverlust</div><div class="plotcell"><strong>+2,9 %</strong>Netto-Flächenänderung</div></div><div style="display:flex;overflow:hidden;border-radius:8px;margin-top:18px;height:14px;background:var(--line)"><span style="width:72.3%;background:var(--accent)"></span><span style="width:27.7%;background:var(--secondary)"></span></div><figcaption>101 untersuchte Inseln; 1971–2014. Quelle: Kench, Ford &amp; Owen (2018), Nature Communications. Landflächenzuwachs bedeutet nicht automatisch verbesserte Bewohnbarkeit.</figcaption></figure>';
+
+const figureRisikovergleich='<figure class="figure"><h3>Gleiche relative Wirkung, anderer absoluter Nutzen</h3><div class="plot"><div class="plotcell"><strong>Niedriges Risiko</strong>40 ohne Behandlung<br>30 mit Behandlung<br><b>10 Ereignisse weniger</b></div><div class="plotcell"><strong>Hohes Risiko</strong>200 ohne Behandlung<br>150 mit Behandlung<br><b>50 Ereignisse weniger</b></div><div class="plotcell"><strong>In beiden Gruppen</strong>25 % relative Risikoreduktion</div></div><figcaption>Fiktive Zahlen je 1.000 Personen innerhalb von fünf Jahren. Bei höherem Ausgangsrisiko ist der absolute Nutzen größer.</figcaption></figure>';
+const figureTestgenauigkeit='<figure class="figure"><h3>Was 58 positive Tests bedeuten können</h3><div class="plot"><div class="plotcell"><strong>8</strong>richtig positiv<br>Erkrankte erkannt</div><div class="plotcell"><strong>≈ 50</strong>falsch positiv<br>Gesunde mit Alarm</div><div class="plotcell"><strong>≈ 13,8 %</strong>tatsächlich krank unter positiv Getesteten</div></div><figcaption>Modellrechnung für 1.000 Menschen, davon zehn erkrankt; Sensitivität 80 %, Spezifität 95 %. Rundungsbedingt Näherungswerte.</figcaption></figure>';
+const figureFrueherkennung='<figure class="figure"><h3>Eine Diagnose früher, aber kein zusätzliches Lebensjahr</h3><div class="plot"><div class="plotcell"><strong>Ohne Früherkennung</strong>Diagnose mit 67<br>Tod mit 70<br><b>3 Jahre nach Diagnose</b></div><div class="plotcell"><strong>Mit Früherkennung</strong>Diagnose mit 60<br>Tod mit 70<br><b>10 Jahre nach Diagnose</b></div><div class="plotcell"><strong>Ergebnis</strong>7 Jahre längere gemessene Überlebenszeit<br><b>0 Jahre länger gelebt</b></div></div><figcaption>Fiktives Beispiel zum Lead-Time Bias: Längeres Überleben ab Diagnose beweist allein keinen Nutzen der Früherkennung.</figcaption></figure>';
+
 function prose(s){
  const parts=s.split(/(```[\s\S]*?```)/g);
  return parts.map(part=>{
@@ -42,6 +47,9 @@ function prose(s){
  return part.split(/\n\s*\n/).map(p=>{
    if(p.startsWith("## "))return '<h2>'+esc(p.slice(3))+'</h2>';
    if(p.startsWith("# "))return "";
+   if(p.trim()==="[[diagram:risikovergleich]]")return figureRisikovergleich;
+   if(p.trim()==="[[diagram:testgenauigkeit]]")return figureTestgenauigkeit;
+   if(p.trim()==="[[diagram:frueherkennung]]")return figureFrueherkennung;
    if(p.trim()==="[[diagram:tradeoffs]]")return figureTradeoffs;
    if(p.trim()==="[[diagram:latitude]]")return figureLatitude;
    if(p.trim()==="[[diagram:timescales]]")return figureTimescales;
