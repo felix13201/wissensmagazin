@@ -40,6 +40,10 @@ const figureRisikovergleich='<figure class="figure"><h3>Gleiche relative Wirkung
 const figureTestgenauigkeit='<figure class="figure"><h3>Was 58 positive Tests bedeuten können</h3><div class="plot"><div class="plotcell"><strong>8</strong>richtig positiv<br>Erkrankte erkannt</div><div class="plotcell"><strong>≈ 50</strong>falsch positiv<br>Gesunde mit Alarm</div><div class="plotcell"><strong>≈ 13,8 %</strong>tatsächlich krank unter positiv Getesteten</div></div><figcaption>Modellrechnung für 1.000 Menschen, davon zehn erkrankt; Sensitivität 80 %, Spezifität 95 %. Rundungsbedingt Näherungswerte.</figcaption></figure>';
 const figureFrueherkennung='<figure class="figure"><h3>Eine Diagnose früher, aber kein zusätzliches Lebensjahr</h3><div class="plot"><div class="plotcell"><strong>Ohne Früherkennung</strong>Diagnose mit 67<br>Tod mit 70<br><b>3 Jahre nach Diagnose</b></div><div class="plotcell"><strong>Mit Früherkennung</strong>Diagnose mit 60<br>Tod mit 70<br><b>10 Jahre nach Diagnose</b></div><div class="plotcell"><strong>Ergebnis</strong>7 Jahre längere gemessene Überlebenszeit<br><b>0 Jahre länger gelebt</b></div></div><figcaption>Fiktives Beispiel zum Lead-Time Bias: Längeres Überleben ab Diagnose beweist allein keinen Nutzen der Früherkennung.</figcaption></figure>';
 
+
+const figureWirkungskette='<figure class="figure"><h3>Die Wirkungskette einer Maßnahme</h3><div class="plot"><div class="plotcell"><strong>1. Das Ziel</strong>Was soll verbessert werden?</div><div class="plotcell"><strong>2. Die Maßnahme</strong>Welcher Anreiz, welches Verbot oder welche Regel wird eingeführt?</div><div class="plotcell"><strong>3. Die Reaktion</strong>Wie passen Menschen ihre Entscheidungen an?</div></div><div class="plot" style="margin-top:10px"><div class="plotcell" style="grid-column:1/-1"><strong>4. Das tatsächliche Ergebnis</strong>Welche beabsichtigten und unbeabsichtigten Folgen treten ein?</div></div><figcaption>Die entscheidende Analyse beginnt zwischen der Maßnahme und der Reaktion. Von dort können weitere Rückkopplungen entstehen.</figcaption></figure>';
+const figureZuckersteuer='<figure class="figure"><h3>Weniger Zucker in britischen Erfrischungsgetränken</h3><div class="bars"><span>2015</span><div class="bartrack"><div class="barfill" style="width:100%"></div></div><strong>135.500 t</strong></div><div class="bars" style="margin-top:12px"><span>2019</span><div class="bartrack"><div class="barfill" style="width:64.65%"></div></div><strong>87.600 t</strong></div><figcaption>Gesamte verkaufte Zuckermenge: Rückgang um rund 35,4 %. Quelle: Institute for Government. Nicht die gesamte Veränderung kann ohne weitere Untersuchung allein der Abgabe zugerechnet werden.</figcaption></figure>';
+
 function prose(s){
  const parts=s.split(/(```[\s\S]*?```)/g);
  return parts.map(part=>{
@@ -50,6 +54,8 @@ function prose(s){
    if(p.trim()==="[[diagram:risikovergleich]]")return figureRisikovergleich;
    if(p.trim()==="[[diagram:testgenauigkeit]]")return figureTestgenauigkeit;
    if(p.trim()==="[[diagram:frueherkennung]]")return figureFrueherkennung;
+   if(p.trim()==="[[diagram:wirkungskette]]")return figureWirkungskette;
+   if(p.trim()==="[[diagram:zuckersteuer]]")return figureZuckersteuer;
    if(p.trim()==="[[diagram:tradeoffs]]")return figureTradeoffs;
    if(p.trim()==="[[diagram:latitude]]")return figureLatitude;
    if(p.trim()==="[[diagram:timescales]]")return figureTimescales;
