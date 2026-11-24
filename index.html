@@ -88,6 +88,31 @@ const figureHousingComfort='<figure class="figure"><h3>21 Grad Lufttemperatur k�
 const figureHousingRecovery='<figure class="figure"><h3>Prinzip einer Lüftung mit Wärmerückgewinnung</h3><div class="plot"><div class="plotcell"><strong>Außenluft</strong>5 °C</div><div class="plotcell"><strong>Wärmetauscher</strong>Abluft erwärmt die Zuluft, ohne dass sich die Ströme vollständig mischen</div><div class="plotcell"><strong>Zuluft</strong>etwa 17 °C</div></div><figcaption>Fiktives Beispiel mit 80 % temperaturbezogener Rückgewinnung und 20 °C Ablufttemperatur. Strombedarf, Feuchte und Frostschutz sind nicht berücksichtigt. Keine Aussage zur Einsparung der gesamten Heizkosten.</figcaption></figure>';
 const figureHousingFurniture='<figure class="figure"><h3>Warum es hinter großen Möbeln kalt werden kann</h3><div class="plot" style="grid-template-columns:repeat(2,1fr)"><div class="plotcell"><strong>Schrank direkt an Außenwand</strong>Wärmeübertragung und Luftbewegung eingeschränkt; lokal kältere Oberfläche möglich</div><div class="plotcell"><strong>Mit ausreichendem Abstand</strong>Verbesserter Luft- und Wärmeaustausch; geringeres Risiko oberflächennaher Feuchte</div></div><figcaption>Schematisches Modell. Ein Abstand hilft nicht zuverlässig gegen Wassereintritt oder erhebliche bauliche Wärmebrücken.</figcaption></figure>';
 
+
+const figureHousingCalculator = '<figure class="figure" id="housing-calc"><h3>Interaktiver Taupunkt- und Oberflächenfeuchte-Rechner</h3><p style="font:normal .88rem/1.6 Inter,system-ui,sans-serif;margin:0 0 14px">Verändere die Raumtemperatur, relative Luftfeuchtigkeit und Oberflächentemperatur. Alle Werte sind Näherungen nach der Magnus-Formel.</p><div style="display:grid;gap:15px;font:normal .9rem Inter,system-ui,sans-serif"><label>Raumtemperatur <strong style="float:right" id="hc-rt-value">20 °C</strong><input id="hc-rt" type="range" min="15" max="28" step="1" value="20" style="display:block;width:100%;margin-top:7px;accent-color:var(--accent)"></label><label>Relative Raumluftfeuchtigkeit <strong style="float:right" id="hc-rh-value">55 %</strong><input id="hc-rh" type="range" min="25" max="85" step="1" value="55" style="display:block;width:100%;margin-top:7px;accent-color:var(--accent)"></label><label>Temperatur der Wandoberfläche <strong style="float:right" id="hc-wt-value">14 °C</strong><input id="hc-wt" type="range" min="5" max="28" step="1" value="14" style="display:block;width:100%;margin-top:7px;accent-color:var(--accent)"></label></div><div class="plot" style="grid-template-columns:repeat(2,minmax(0,1fr));margin:18px 0 12px"><div class="plotcell"><strong id="hc-dew" style="font-size:1.4rem">10,7 °C</strong>Taupunkt</div><div class="plotcell"><strong id="hc-surface" style="font-size:1.4rem">79 %</strong>Relative Feuchte an der Wand</div></div><div class="bartrack" style="height:15px;margin:9px 0"><div class="barfill" id="hc-bar" style="width:79%"></div></div><p id="hc-status" style="font:600 .92rem/1.55 Inter,system-ui,sans-serif;margin:12px 0">Berechnung wird aktualisiert …</p><p id="hc-threshold" style="font:normal .87rem/1.55 Inter,system-ui,sans-serif;margin:6px 0"></p><figcaption>Vereinfachtes Modell ohne zeitliche Dynamik, Materialfeuchte oder lokale Luftströmungen. Es ersetzt keine bautechnische Begutachtung. Schon längerfristig hohe Oberflächenfeuchtigkeit kann Schimmel fördern, bevor Kondensation sichtbar wird.</figcaption></figure>';
+function attachHousingCalculator(){
+ const root=document.getElementById("housing-calc");
+ if(!root)return;
+ const pick=n=>root.querySelector("#hc-"+n);
+ const sat=t=>6.112*Math.exp(17.62*t/(243.12+t));
+ const fmt=n=>n.toLocaleString("de-DE",{maximumFractionDigits:1,minimumFractionDigits:1});
+ function update(){
+   const rt=Number(pick("rt").value),rh=Number(pick("rh").value),wt=Number(pick("wt").value);
+   pick("rt-value").textContent=rt+" °C";pick("rh-value").textContent=rh+" %";pick("wt-value").textContent=wt+" °C";
+   const vap=sat(rt)*rh/100,g=Math.log(vap/6.112),dew=243.12*g/(17.62-g);
+   const surface=Math.min(100,100*vap/sat(wt));
+   const tG=Math.log(vap/.8/6.112),critical=243.12*tG/(17.62-tG);
+   pick("dew").textContent=fmt(dew)+" °C";
+   pick("surface").textContent=fmt(surface)+" %";
+   pick("bar").style.width=surface+"%";
+   pick("bar").style.background=surface>=80?"#c18352":"var(--accent)";
+   pick("status").textContent=surface>=100?"Kondensation möglich: Wandtemperatur liegt am oder unter dem Taupunkt.":surface>=80?"Erhöhtes Feuchterisiko bei längerem Bestehen, auch ohne sichtbares Kondenswasser.":surface>=70?"Erhöhte Oberflächenfeuchte; Material und Dauer bleiben entscheidend.":"Im Modell vergleichsweise günstig: Eine andere Feuchtigkeitsquelle ist dadurch nicht ausgeschlossen.";
+   pick("threshold").textContent="Für weniger als 80 % relative Oberflächenfeuchte müsste die Wand bei diesen Raumluftwerten wärmer als ungefähr "+fmt(critical)+" °C sein.";
+ }
+ ["rt","rh","wt"].forEach(n=>pick(n).addEventListener("input",update));
+ update();
+}
+
 function prose(s){
  const parts=s.split(/(```[\s\S]*?```)/g);
  return parts.map(part=>{
@@ -102,6 +127,7 @@ function prose(s){
    if(p.trim()==="[[diagram:inflation-drivers]]")return figureInflationDrivers;
    if(p.trim()==="[[diagram:inflation-base]]")return figureInflationBase;
    if(p.trim()==="[[diagram:inflation-wages]]")return figureInflationWages;
+   if(p.trim()==="[[diagram:housing-calculator]]")return figureHousingCalculator;
    if(p.trim()==="[[diagram:housing-saturation]]")return figureHousingSaturation;
    if(p.trim()==="[[diagram:housing-wall]]")return figureHousingWall;
    if(p.trim()==="[[diagram:housing-winter]]")return figureHousingWinter;
@@ -169,7 +195,7 @@ function route(){
  $("article").classList.toggle("hidden",!a);
  if(a){
   $("articleContent").innerHTML='<div class="eyebrow">'+esc(a.category)+" · "+esc(fmtDate(a.date))+'</div><h1>'+esc(a.title)+'</h1><p class="deck">'+esc(a.subtitle)+'</p><div id="toc" class="toc"></div>'+(a.status==="full"?"":'<div class="notice">Diese Ausgabe ist noch eine Kurzfassung.</div>')+'<div class="prose">'+prose(a.content)+"</div>";
-  makeToc();document.title=a.title+" · Wissensmagazin";
+  makeToc();attachHousingCalculator();document.title=a.title+" · Wissensmagazin";
   requestAnimationFrame(()=>{const pos=Number(localStorage.getItem("wm-position-"+a.id)||0);if(pos>500&&confirm("Du hast diesen Artikel bereits angefangen. An der letzten Lesestelle fortsetzen?"))window.scrollTo(0,pos);else window.scrollTo(0,0);progress()});
  }else{archive();document.title="Wissensmagazin · Eine neue Perspektive";$("progress").style.width="0"}
  applySettings();
